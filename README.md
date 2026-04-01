@@ -29,36 +29,28 @@ The result is a set of verified, ready-to-merge pull requests.
 
 ## Installation
 
-### Quick install (symlinks — recommended)
+### Install
 
 ```bash
-git clone https://github.com/iykazrji/scout-skills.git
-cd scout-skills
-
-# Symlink all skills into Claude Code
-for skill in skills/*/; do
-  name=$(basename "$skill")
-  ln -sf "$(pwd)/$skill" ~/.claude/skills/$name
-done
+# Clone directly into your Claude Code skills directory
+git clone https://github.com/iykazrji/scout-skills.git ~/.claude/skills/scout
 ```
 
-This installs all 7 skills at once. Symlinks mean `git pull` updates everything automatically.
+That's it. `/scout` is immediately available.
 
-### Manual install (copy)
+### Enable standalone commands (optional)
+
+By default, sub-skills are invoked as `/scout:reconn`, `/scout:grill-me`, etc. If you also want them as standalone commands (`/reconn`, `/grill-me`, etc.), run the install script:
 
 ```bash
-git clone https://github.com/iykazrji/scout-skills.git
-
-# Copy all skills into Claude Code
-for skill in scout-skills/skills/*/; do
-  name=$(basename "$skill")
-  cp -r "$skill" ~/.claude/skills/$name
-done
+cd ~/.claude/skills/scout && ./install.sh
 ```
+
+This creates symlinks at `~/.claude/skills/<name>` pointing into the scout repo. Each skill then works both ways.
 
 ### Verify installation
 
-After installing, start a new Claude Code session and type `/scout` — you should see the skill activate.
+Start a new Claude Code session and type `/scout` — you should see the skill activate.
 
 ## Usage
 
