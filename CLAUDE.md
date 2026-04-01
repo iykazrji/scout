@@ -2,66 +2,76 @@
 
 ## Repo Location
 
-`~/.claude/skills/scout/` — this is both the git repo and the skill directory. No symlinks needed.
+`~/.claude/skills/scout/` — the git repo for the orchestrator.
+
+Sub-skills live as **standalone directories** at `~/.claude/skills/<name>/` and are **symlinked into scout** so they're shared.
 
 ## Structure
 
 ```
-~/.claude/skills/scout/
-├── SKILL.md                 ← main /scout orchestrator
-├── settings.md              ← /scout:settings sub-skill
-├── settings.json            ← user config (gitignored)
-├── overview.html            ← visual overview page
-├── CLAUDE.md                ← you are here
-├── README.md                ← public docs
-├── .gitignore
-├── docs/
-│   ├── DESIGN.md
-│   └── scout-overview.html
-├── reconn/SKILL.md          ← /scout:reconn
-├── execute-issues/SKILL.md  ← /scout:execute-issues
-├── grill-me/SKILL.md        ← /scout:grill-me
-├── write-a-prd/SKILL.md     ← /scout:write-a-prd
-├── prd-to-issues/SKILL.md   ← /scout:prd-to-issues
-├── ui-designer/             ← /scout:ui-designer
-├── agent-device/            ← /scout:agent-device
-├── senior-architect/        ← /scout:senior-architect
-├── flutter-expert/          ← /scout:flutter-expert
-├── react-native-best-practices/
-├── rn-animations-performance/
-├── using-react-native-skia/
+~/.claude/skills/
+├── scout/                      ← git repo
+│   ├── SKILL.md                ← /scout orchestrator
+│   ├── settings.md             ← /scout:settings
+│   ├── settings.json           ← user config (gitignored)
+│   ├── overview.html
+│   ├── CLAUDE.md, README.md, .gitignore
+│   ├── docs/
+│   ├── reconn -> ../reconn              ← symlink
+│   ├── grill-me -> ../grill-me          ← symlink
+│   ├── write-a-prd -> ../write-a-prd    ← symlink
+│   ├── prd-to-issues -> ../prd-to-issues
+│   ├── execute-issues -> ../execute-issues
+│   ├── ui-designer -> ../ui-designer
+│   ├── agent-device -> ../agent-device
+│   ├── senior-architect -> ../senior-architect
+│   ├── flutter-expert -> ../flutter-expert
+│   ├── react-best-practices -> ../react-best-practices
+│   ├── react-native-best-practices -> ...
+│   ├── rn-animations-performance -> ...
+│   ├── using-react-native-skia -> ...
+│   ├── expressjs-best-practices -> ...
+│   └── fastify-best-practices -> ...
+├── reconn/SKILL.md             ← standalone /reconn
+├── grill-me/SKILL.md           ← standalone /grill-me
+├── write-a-prd/SKILL.md        ← standalone /write-a-prd
+├── prd-to-issues/SKILL.md
+├── execute-issues/SKILL.md
+├── ui-designer/
+├── agent-device/
+├── senior-architect/
+├── flutter-expert/
 ├── react-best-practices/
-├── expressjs-best-practices/
-└── fastify-best-practices/
+└── ... (remaining knowledge skills)
 ```
 
-## Invocation
+## How It Works
 
-- `/scout` — runs the main orchestrator (SKILL.md at repo root)
-- `/scout:reconn` — runs the reconn sub-skill
-- `/scout:settings` — opens settings menu
-- `/scout:grill-me`, `/scout:write-a-prd`, etc.
+- Each skill is a **real directory** at `~/.claude/skills/<name>/` — invokable standalone as `/<name>`
+- Scout contains **relative symlinks** (`../reconn`, `../grill-me`, etc.) — making them also available as `/scout:<name>`
+- Git tracks the symlinks, so cloning the repo preserves the link structure
 
 ## Adding a New Skill
 
-1. Create the directory: `~/.claude/skills/scout/<new-skill>/SKILL.md`
-2. Commit and push:
+1. Create the standalone skill: `~/.claude/skills/<new-skill>/SKILL.md`
+2. Symlink it into scout:
    ```bash
    cd ~/.claude/skills/scout
-   git add <new-skill> && git commit -m "feat: add <new-skill>" && git push origin main
+   ln -s ../<new-skill> <new-skill>
    ```
-3. It's immediately available as `/scout:<new-skill>`
+3. Commit and push:
+   ```bash
+   git add <new-skill> && git commit -m "feat: link <new-skill>" && git push origin main
+   ```
 
 ## Editing Skills
 
-Edit files directly — they're real files, not symlinks. Commit from the repo:
-```bash
-cd ~/.claude/skills/scout
-git add -A && git commit -m "description" && git push origin main
-```
+Edit the **standalone directory** at `~/.claude/skills/<name>/`. Changes are visible through the symlink in scout automatically.
+
+Note: only scout's own files (SKILL.md, settings.md, docs/, etc.) are tracked by git. The symlinked skills are tracked as symlink references, not file contents.
 
 ## Conventions
 
-- **`settings.json` is gitignored** — user-specific runtime config (quality profile, execution mode).
-- **Check `git status` periodically** — catch untracked runtime files before they get committed.
-- **Knowledge skills are bundled but independent** — sub-skills like `/scout:react-best-practices` work standalone for code review, refactoring, or general guidance.
+- **`settings.json` is gitignored** — user-specific runtime config.
+- **Symlinks use relative paths** (`../reconn`) so the structure is portable.
+- **Skills are independent** — removing a symlink from scout doesn't delete the standalone skill.
