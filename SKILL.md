@@ -900,6 +900,7 @@ This is a React Native project. When researching:
 - If Reanimated/Gesture Handler present: note animation patterns and gesture usage via /scout:rn-animations-performance
 - If Skia present: note shader/canvas patterns via /scout:using-react-native-skia
 - If screen-transitions present: note transition patterns, zoom configs, boundary triggers, and snap points via /scout:using-react-native-screen-transitions
+- If loading animations or custom loaders are needed: check for math-curve-loader patterns via /scout:using-math-curve-loaders (Skia + Reanimated particle trails)
 ```
 
 **Griller** (Phase 1c) — append to task prompt:
@@ -917,6 +918,7 @@ This is a React Native project. In addition to standard grill categories, probe:
 - Platform-specific UI considerations (iOS vs Android design differences)
 - Testing strategy (Jest, React Native Testing Library, Detox/Maestro E2E)
 - If Expo: managed vs bare, EAS Build/Submit/Update usage
+- Loading animation approach (math curve loaders via Skia vs stock ActivityIndicator vs Lottie)
 ```
 
 **Architect** (Phase 2b) — append to task prompt:
@@ -933,6 +935,7 @@ This is a React Native project. When writing the PRD:
 - If Expo: specify SDK constraints, EAS workflow, and managed/bare considerations
 - If Skia involved: define canvas/shader requirements via /scout:using-react-native-skia patterns
 - If screen-transitions present: define transition architecture (zoom vs presets vs custom), boundary trigger strategy, gesture dismiss behavior, and backdrop approach via /scout:using-react-native-screen-transitions
+- If loading animations needed: specify curve type, particle count, theming, and placement via /scout:using-math-curve-loaders patterns
 - Specify testing strategy (unit, component, E2E with Detox/Maestro)
 ```
 
@@ -958,6 +961,7 @@ This is a React Native project. When implementing:
 - If Expo: follow Expo conventions (expo-router file-based routing, Expo config plugins, EAS)
 - If Skia present: follow /scout:using-react-native-skia for shader and canvas code
 - If screen-transitions present: follow /scout:using-react-native-screen-transitions for all screen transition code — use BlankStack navigator, bounds().navigation.zoom() for hero animations, Transition.Boundary.Trigger for source elements, useScreenGesture/useScreenAnimation for dismiss thresholds, and Transition.ScrollView for gesture-aware scrolling. Prefer active element animation (zoom) over shared element libraries.
+- If loading animations needed: follow /scout:using-math-curve-loaders — use Skia Canvas + Circle with useFrameCallback time source and useDerivedValue worklets for parametric math. Mark curve functions with 'worklet' directive. Use declarative approach for ≤40 particles, imperative useDrawCallback for 64+.
 - Testing: write component tests with RNTL, snapshot tests for UI, E2E for critical flows
 ```
 
